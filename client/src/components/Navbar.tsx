@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { userEmailState } from "../store/selectors/userEmail";
 
 function Navbar() {
+  const userEmail = useRecoilValue(userEmailState)
+  console.log(userEmail);
+
+  const handlelogOut =  () => {
+    localStorage.removeItem("token");
+    window.location.reload();
+  }
 
   return (
     <>
@@ -12,11 +21,23 @@ function Navbar() {
         </div>
         <div>
           <ul className="flex lg:gap-8 gap-3 font-poppins">
-            <span className="flex lg:gap-8 gap-3 lg:mt-[6px]">
-              <Link to="/login" className="hidden lg:flex">
+            <span className="flex lg:gap-8 gap-3 lg:mt-[6px]"> 
+              {
+                userEmail ? (
+                  <div className="flex gap-8">
+                    <p>{userEmail}</p>
+                    <button className="hidden lg:flex" onClick={handlelogOut}>
+               Logout
+              </button>
+                </div>
+                ) : (
+                    <div>
+                       <Link to="/login" className="hidden lg:flex">
                Login
               </Link>
-              <Link to="/signup" className="hidden md:block">Signup</Link>
+                    </div>
+                )
+              }
             </span>
           </ul>
         </div>

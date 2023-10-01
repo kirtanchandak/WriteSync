@@ -2,8 +2,11 @@ import { useState } from "react";
 import Layout from "../components/Layout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { userState } from "../store/atoms/user";
+import { useSetRecoilState } from "recoil";
 
 function Login() {
+    const userEmail = useSetRecoilState(userState);
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -17,7 +20,10 @@ function Login() {
             })
             console.log(res.data);
             localStorage.setItem("token", res.data.token);
-            localStorage.setItem("email", res.data.email)
+            userEmail({
+                isLoading: false,
+                userEmail: email,
+            })
             navigate("/");
         } catch (err) {
             console.log(err);
