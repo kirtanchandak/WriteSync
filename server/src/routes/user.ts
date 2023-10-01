@@ -34,7 +34,7 @@ router.post("/signup", async (req, res) => {
         const user = new User({ email, password });
         user.save();
         const token = jwt.sign({ email }, process.env.secretKey || "", { expiresIn: "1h" })
-        return res.status(200).json({ message: "User created successfully", token });
+        return res.status(200).json({ message: "User created successfully", token, email });
     }
 })
 
@@ -43,7 +43,7 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
     if (user) {
         const token = jwt.sign({ email }, process.env.secretKey || "", { expiresIn: "1h" })
-        res.json({ message: "User logged in successfully", token });
+        res.json({ message: "User logged in successfully", token, email });
     } else {
         res.status(403).json({ message: "Invalid email or password" });
     }
