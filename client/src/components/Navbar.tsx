@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { userEmailState } from "../store/selectors/userEmail";
 
 function Navbar() {
+  const navigate = useNavigate();
   const userEmail = useRecoilValue(userEmailState)
-  console.log(userEmail);
 
   const handlelogOut =  () => {
     localStorage.removeItem("token");
+    navigate("/login");
     window.location.reload();
   }
 

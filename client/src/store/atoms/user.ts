@@ -4,6 +4,6 @@ export const userState = atom({
     key: "userState", 
     default: {
         isLoading: false,
-        userEmail: "",
+        userEmail: null as null | string,
     }
 })

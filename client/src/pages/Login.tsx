@@ -23,7 +23,7 @@ function Login() {
                 isLoading: false,
                 userEmail: email,
             })
-            navigate("/document");
+            navigate("/documents");
         } catch (err) {
             console.log(err);
         }

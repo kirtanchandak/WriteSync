@@ -61,4 +61,10 @@ router.get("/documents", authenticateJWT, async (req, res) => {
     }
 })
 
+router.get("/me", authenticateJWT, async (req, res) => {
+    res.json({
+      username: req.headers["email"],
+    });
+  });
+
 export { router as userRouter };
