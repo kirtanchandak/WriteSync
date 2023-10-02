@@ -18,13 +18,12 @@ function Login() {
                 email: email,
                 password: password
             })
-            console.log(res.data);
             localStorage.setItem("token", res.data.token);
             userEmail({
                 isLoading: false,
                 userEmail: email,
             })
-            navigate("/");
+            navigate("/document");
         } catch (err) {
             console.log(err);
         }

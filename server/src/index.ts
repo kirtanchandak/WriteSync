@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import cors from "cors"
 import { userRouter } from './routes/user'
+import { authenticateJWT } from './middleware/auth'
 
 dotenv.config({ path: "./.env" })
 

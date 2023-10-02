@@ -1,29 +1,13 @@
-import express from "express"
+import express, {Request, Response, NextFunction } from "express"
 import { User } from "../models/user"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
+import { Document } from "../models/document"
+import { authenticateJWT } from "../middleware/auth"
 
 const router = express.Router()
 
 dotenv.config({ path: "./.env" })
-
-const authenticateJWT = (req: any, res: any, next: any) => {
-    const authHeader = req.headers.authorization;
-    if (authHeader) {
-        const token = authHeader.split(" ")[1];
-        jwt.verify(token, process.env.secretKey || "", (err: any, user: any) => {
-            if (err) {
-                return res.sendStatus(403).send({error: "Token in Invalid!"});
-            } else {
-                req.user = user;
-                next();
-            }   
-        })
-    }
-    else {
-        res.sendStatus(401).send({error: "You are not authorized!"});
-    }
-}
 
 router.post("/signup", async (req, res) => {
     const { email, password } = req.body;
@@ -32,22 +16,49 @@ router.post("/signup", async (req, res) => {
         res.status(400).json({ message: "User already exists" });
     } else {
         const user = new User({ email, password });
-        user.save();
-        const token = jwt.sign({ email }, process.env.secretKey || "", { expiresIn: "1h" })
+        await user.save(); // Await the user.save() operation
+        const token = jwt.sign({ email }, process.env.secretKey || "", { expiresIn: "1h" });
         return res.status(200).json({ message: "User created successfully", token, email });
     }
 })
+
 
 router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (user) {
-        const token = jwt.sign({ email }, process.env.secretKey || "", { expiresIn: "1h" })
+        const token = jwt.sign({ email, password }, process.env.secretKey || "", { expiresIn: "1h" })
         res.json({ message: "User logged in successfully", token, email });
     } else {
         res.status(403).json({ message: "Invalid email or password" });
     }
     
+})
+
+router.post("/document", authenticateJWT, async (req, res) => {
+    const {title, content} = req.body;
+    const email = req.headers["email"];
+    
+    try {
+        const document = new Document({ title, content, createdBy: email });
+        await document.save();
+        res.status(201).json({ message: 'Document created successfully', document });
+      } catch (error) {
+        console.error('Error creating document:', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+})
+
+router.get("/documents", authenticateJWT, async (req, res) => {
+    const email = req.headers["email"];
+    try {
+        const documents = await Document.find({
+            createdBy: email
+        });
+        res.status(200).json({ documents });
+    } catch (error) {
+        console.log(error);
+    }
 })
 
 export { router as userRouter };
