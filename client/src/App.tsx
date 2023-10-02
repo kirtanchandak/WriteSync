@@ -1,13 +1,14 @@
 import './App.css'
 import { useEffect } from 'react';
 import { userState } from './store/atoms/user';
-import {Route, Routes} from "react-router-dom"
+import { Route, Routes } from "react-router-dom"
+import axios from 'axios';
+import { useSetRecoilState } from 'recoil';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Document from './pages/Documents';
-import axios from 'axios';
-import { useSetRecoilState } from 'recoil';
+import DocumentPage from "./pages/DocumentPage"
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <Route path='/login' element={<Login />}></Route>
         <Route path='/signup' element={<Signup />}></Route>
         <Route path='/documents' element={<Document />}></Route>
+        <Route path='/document/:id' element={<DocumentPage />}></Route>
       </Routes>
     </>
   )

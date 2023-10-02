@@ -3,9 +3,14 @@ import { useRecoilValue } from "recoil";
 import { userEmailState } from "../store/selectors/userEmail";
 import Layout from "../components/Layout"
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { documentState } from "../store/atoms/document";
 
 function Document() {
   
+  const setDocument = useSetRecoilState(documentState)
+
   type Document = {
     title: string, 
     content: string,
@@ -30,6 +35,10 @@ function Document() {
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       });
+      setDocument({
+        title: title,
+        content: content
+      })
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -80,10 +89,10 @@ function Document() {
           <div className="flex justify-center items-center">
          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-10">
           {documents.map((document: Document) => (
-            <div key={document.title} className="bg-gray-200 p-12 rounded-lg text-center"> 
+            <Link to={`/document/${document._id}`} key={document.title} className="bg-gray-200 p-12 rounded-lg text-center"> 
               <h1 className="">{document.title}</h1>
               <p>{document.content}</p>
-            </div>
+            </Link>
           ))}
             </div>
             </div>

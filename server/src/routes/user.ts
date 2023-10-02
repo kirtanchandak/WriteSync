@@ -61,6 +61,16 @@ router.get("/documents", authenticateJWT, async (req, res) => {
     }
 })
 
+router.get("/document/:id", authenticateJWT, async (req, res) => {
+    const id = req.params.id;
+    try {
+        const document = await Document.findById(id);
+        res.status(200).json({ document });
+    } catch (error) {
+        console.log(error);
+    }
+})
+
 router.get("/me", authenticateJWT, async (req, res) => {
     res.json({
       username: req.headers["email"],
