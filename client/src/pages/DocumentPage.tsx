@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { createEditor } from 'slate';
-import { Slate, Editable, withReact } from 'slate-react';
 import Layout from '../components/Layout';
 import { useParams } from 'react-router-dom';
+import Quill from "quill"
+import "quill/dist/quill.snow.css"
+import {io} from "socket.io-client"
 
 function DocumentPage() {
   const { id } = useParams<{ id: string }>();
-  const [editor] = useState(() => withReact(createEditor()));
   const [documentContent, setDocumentContent] = useState<string>('');
   const [documentTitle, setDocumentTitle] = useState<string>('');
   useEffect(() => {
@@ -26,16 +26,22 @@ function DocumentPage() {
     };
 
     getDocument();
-  }, [id]);
+  }, [id]); 
 
-  const initialValue = [
-    {
-      type: 'paragraph',
-      children: [{ text: `${documentContent}` }],
-    },
-  ];
+  useEffect(() => {
+    const quillContainer = document.getElementById("#container");
+    if (quillContainer) {
+      new Quill(quillContainer, { theme: "snow" });
+    }
+  }, []);
+  
+  useEffect(() => {
+    const socket = io("http://localhost:3001")
+    return () => {
+      socket.disconnect()
+    }
+  })
 
-  // Render Slate editor only when documentContent is available
   return (
     <div>
       <Layout>
@@ -43,11 +49,7 @@ function DocumentPage() {
         <p className='text-center text-2xl font-bold'>{documentTitle}</p>
         </div>
         <div className='pt-5'>
-        {documentContent && (
-          <Slate editor={editor} initialValue={initialValue}>
-            <Editable className='border-2 border-black' />
-          </Slate>
-          )}
+      <div id='#container' className=''></div>
           </div>
       </Layout>
     </div>
