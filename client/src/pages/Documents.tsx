@@ -39,7 +39,6 @@ function Document() {
         title: title,
         content: content
       })
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
