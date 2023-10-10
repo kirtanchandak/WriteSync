@@ -8,6 +8,7 @@ import {Server} from "socket.io"
 
 dotenv.config({ path: "./.env" })
 
+//express-server
 const app = express()
 const port = 3000
 
@@ -22,6 +23,8 @@ app.listen(port, (): void => {
   console.log(`Example app listening on port ${port}`)
 })
 
+
+//socket-io server
 const server = http.createServer();
 const io = new Server(server, {
   cors: {
@@ -31,9 +34,12 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("User Connected");
+  console.log("a user connected");
+  socket.on("listen-text", (data) => {
+    io.emit("new-opreation", data)
+  })
 })
 
-server.listen(3001, () => {
-  console.log("Socket server listening on port 3001");
+server.listen(4000, () => {
+  console.log("Socket listening on :4000");
 })
